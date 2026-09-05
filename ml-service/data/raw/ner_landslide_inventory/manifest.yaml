@@ -1,0 +1,126 @@
+# manifest.yaml — NER Historical Landslide Inventory: Acquisition Specification (NOT ACQUIRED)
+#
+# Status: BLOCKED. Network egress test (2026-09-05, this session) to all
+# candidate hosts returned HTTP 403 from this sandbox (allowlisted to
+# software-package hosts only, per every prior phase's identical finding).
+# No dataset was downloaded, fabricated, or substituted. A susceptibility/
+# hazard map is explicitly NOT treated as an observed-landslide inventory.
+
+primary_candidate:
+  name: "GSI Bhusanket Landslide Incidence Database"
+  organization: "Geological Survey of India"
+  url: "https://bhusanket.gsi.gov.in/landslideIncidence.html"
+  category: "C - event/incidence reports (observed occurrences, not susceptibility zonation)"
+  access_method: "State/year query web portal -- exact export mechanism UNVERIFIED (network-blocked, could not inspect)"
+  coverage_target: "All 8 NER states: Arunachal Pradesh, Assam, Manipur, Meghalaya, Mizoram, Nagaland, Sikkim, Tripura"
+  license: "UNVERIFIED (Government of India source; NDSAP likely applies, not confirmed)"
+  status: "NOT ACQUIRED -- HTTP 403 on this session's access attempt"
+
+backup_candidate:
+  name: "NRSC/Bhuvan Landslide Atlas of India (2014 Seasonal Inventory + ongoing)"
+  organization: "NRSC/ISRO"
+  url: "https://bhuvan-app1.nrsc.gov.in/disaster/usrtasks/landslide/landslide.php"
+  category: "A/D - satellite-mapped, partially field-validated"
+  access_method: "WMS-backed WebGIS viewer (confirmed base: bhuvan-vec2.nrsc.gov.in/bhuvan/wms); per-state/year vector export endpoint NOT identified in prior investigation (JS-driven, GetCapabilities request failed via available tooling)"
+  status: "NOT ACQUIRED -- HTTP 403 this session; endpoint still unresolved from prior session"
+
+acquisition_spec_for_future_environment:
+  expected_filename: "ner_landslide_inventory_<source>_<year>.<ext>"
+  destination: "ml-service/data/raw/ner_landslide_inventory/"
+  expected_crs: "EPSG:4326 (verify against actual .prj/service metadata once acquired -- do not assume)"
+  validation_rules:
+    - "record count > 0 and geometry type is Point or Polygon (not a raster/zonation grid)"
+    - "attribute table does not consist solely of susceptibility class labels"
+    - "coordinates fall within NER states' real bounding box (verify against an authoritative boundary once available)"
+    - "run existing ml-service/src/data/quality_checks.py + leakage_audit.py unmodified against the file once obtained"
+  preprocessing_command: "None yet -- pipeline code is unmodified per this task's scope; run existing quality_checks/leakage_audit only after acquisition"
+  provenance_fields_required_on_acquisition: [source, url, access_date, dataset_name_version, license, file_format, crs, coverage, record_count]
+
+blocker: "Sandboxed network egress cannot reach any GSI/NRSC host (HTTP 403, verified this session)."
+next_action: "A human with unrestricted network access must visit the two URLs above, determine the actual export mechanism, and upload the resulting file for processing."
+
+# ============================================================
+# ACTUAL ACQUIRED DATA (appended below; the acquisition spec
+# above is left unmodified as the historical record of the
+# investigation process, per instruction not to alter it).
+# ============================================================
+actual_acquired_dataset:
+  status: "ACQUIRED via manual user upload, 2026-09-05"
+  note: >
+    This did NOT come through the Bhuvan/NDEM endpoints investigated
+    above (those remain unresolved/blocked) -- the user directly
+    provided the GSI Landslide Inventory shapefile + a parquet export
+    of the same data.
+
+  source: "Geological Survey of India (GSI) -- national Landslide Inventory"
+  provenance: "Provided directly by the user as an upload; original acquisition URL/date from GSI not independently verified by this session."
+  access_date: "2026-09-05 (date of upload into this project)"
+  dataset_name_version: "GSI_Landslide_Inventory (version/release date not stated in the provided files)"
+  license: "UNVERIFIED -- not stated in the provided files"
+
+  immutable_source_location: "ml-service/data/raw/gsi_national_landslide_inventory/ (unmodified, original upload)"
+  immutable_source_files:
+    - "GSI_Landslide_Inventory.shp"
+    - "GSI_Landslide_Inventory.shx"
+    - "GSI_Landslide_Inventory.dbf"
+    - "GSI_Landslide_Inventory.prj"
+    - "gsi_landslide_inventory.parquet"
+  immutable_source_checksums_md5:
+    "GSI_Landslide_Inventory.shp": "e94ce60d6765845b427f2abfaf6a965d"
+    "GSI_Landslide_Inventory.shx": "027d15fc1fe0d6018816175260711325"
+    "GSI_Landslide_Inventory.dbf": "9dbe6148ab4cf4a7a02e76256a8f2e03"
+    "GSI_Landslide_Inventory.prj": "45cf0f2803bf9a9b036fe049a8e96509"
+    "gsi_landslide_inventory.parquet": "d72bd0f0b292d7b59cd98debdd5851f9"
+
+  national_totals:
+    record_count: 30842
+    geometry_type: "Point"
+    crs: "GEOGCS[\"GCS_WGS_84_CRS84\" ... ] -- parses as a valid CRS via geopandas but does NOT resolve to a standard EPSG code; treat as WGS84-equivalent, verify before assuming EPSG:4326 exactly"
+
+  ner_subset:
+    derivation_method: "Deterministic filter on STATE column, exact match against the 8 NER state names -- no fuzzy matching (ml-service/src/data/ner_subset.py::extract_state_subset)"
+    reproduction_script: "scripts/extract_ner_landslide_subset.py"
+    output_path: "ml-service/data/raw/ner_landslide_inventory/ner_landslide_inventory.gpkg"
+    output_checksum_md5: "04dcbee6ca58f5160f46e5b85b0f7d8f"
+    output_checksum_note: >
+      GeoPackage embeds a write timestamp in gpkg_contents.last_change,
+      so the file checksum changes on every re-run of
+      scripts/extract_ner_landslide_subset.py even though the actual
+      data is identical -- verified by comparing record count, per-state
+      counts, OBJECTID values, and geometry bounds across runs (all
+      identical). Treat DATA equivalence (re-run the script and compare
+      those fields), not byte-for-byte file equivalence, as the
+      correctness check for this output.
+    record_count: 8546
+    state_counts:
+      Mizoram: 2042
+      Nagaland: 1632
+      Manipur: 1575
+      Arunachal Pradesh: 1048
+      Meghalaya: 865
+      Sikkim: 693
+      Assam: 624
+      Tripura: 67
+    date_field: "INITIATION (year, integer). 0 used as a missing-year sentinel (confirmed, not a real year)."
+    date_coverage: "Real years observed: 1940-2020. 6,786 of 8,546 NER records (79.4%) have INITIATION=0 (missing), ranging from 43.3% missing (Tripura) to 99.1% missing (Sikkim)."
+    duplicate_coordinates: "739 of 8,546 NER records (8.6%) share exact coordinates with another record."
+    duplicate_slide_no: "22 of 8,546 NER records share a SLIDE_NO with another record (checked via existing leakage_audit.check_duplicate_event_leakage)."
+    missing_triggering_field: "609 of 8,546 (7.1%) missing TRIGGERING."
+    represents_observed_events: >
+      YES, not a susceptibility/hazard map -- confirmed by schema: each
+      record has SLIDE_NO, LS_AREA, LS_VOLUME, ACTIVITY (Active/Suspended/
+      Dormant/Reactivated), STYLE (Single/Multiple/Successive/Complex),
+      TRIGGERING, INITIATION year, and impact fields (PERSONS_DE,
+      PEOPLE_AFF) -- i.e. individually mapped, characterized landslide
+      events, not a zonation grid.
+    suitability_as_positive_ml_labels: >
+      Usable as positive labels with caveats: (1) date coverage is very
+      poor (79.4% missing year) -- temporal alignment per
+      docs/temporal_alignment.md will be far harder than for the
+      single-event Kerala inventory; (2) duplicate coordinates (8.6%)
+      and duplicate SLIDE_NO (22 records) need resolution before use,
+      matching this project's existing leakage-audit conventions;
+      (3) CRS does not cleanly resolve to an EPSG code -- must be
+      explicitly confirmed/reprojected, not assumed, before any spatial
+      join with DEM/rainfall/soil layers.
+    tests_run: "ml-service/tests/test_ner_subset.py (6 tests, synthetic fixtures) -- all pass. Full suite: see final response."

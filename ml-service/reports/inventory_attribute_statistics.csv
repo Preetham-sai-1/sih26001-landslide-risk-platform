@@ -1,0 +1,22 @@
+field_name,data_type,n_unique_values,missing_count,missing_pct,min,max,mean,n_zero_values,top_5_values_if_categorical
+No,int64,2501,0,0.0,0,2507,663.4856,2228,
+District,str,13,0,0.0,,,,,Idukki=2223; Palakkad=793; Malappuram=429; Wayanad=331; Thrissur=256
+NRSC,str,2,0,0.0,,,,,Y=2899; N=1829
+GSI,str,2,0,0.0,,,,,N=3333; Y=1395
+New,str,2,0,0.0,,,,,N=3872; Y=856
+Type_of_sl,str,3,0,0.0,,,,,DF=2816; SS=1760; RF=152
+Length,int64,408,0,0.0,0,3138,46.1734,3069,
+Width,int64,84,0,0.0,0,306,6.0888,3069,
+Area,float64,3469,0,0.0,0.0,23887853.0,8121.0599,420,
+Building_I,int64,11,0,0.0,0,23,0.1992,4083,
+Road_impac,str,3,0,0.0,,,,,N=3831; C=625; D=272
+Impact_Agr,str,8,0,0.0,,,,,N=2534; FMP=1194; SPL=433; TEA=176; FCP=162
+LU_2010,str,24,0,0.0,,,,,FMP=1227; FDN=1142; SPL=424; BRF=382; BUI=258
+LU_2018,str,25,0,0.0,,,,,FMP=1185; FDN=1103; SPL=422; BRF=387; BUI=334
+Specific_r,str,24,3864,81.73,,,,,2=267; 1=266; 10=137; 5=59; 4=36
+Remarks,str,606,3698,78.21,,,,,Road blocked=80; Built up increased=70; The slide occur in the cultivated land.=26; Flow occurred in cultivated land=20; Flow occurred in cultivated land.=17
+POINT_X,float64,4708,0,0.0,75.015414,77.396262389,76.6712,0,
+POINT_Y,float64,4718,0,0.0,8.474453,12.654953,10.4747,0,
+Reclass_Sl,int64,9,0,0.0,1,9,4.5336,0,
+RASTERVALU,float64,2917,0,0.0,0.0,87.8661727905,25.1937,6,
+geometry,"Point (XYZ), EPSG:4326",4728,0,0.0,"lon=75.015414, lat=8.474453","lon=77.39626238900007, lat=12.654953",,,Z is constant 0.0 for all 4728 records (not elevation)

@@ -1,0 +1,50 @@
+# manifest.yaml — Kerala Prediction Grid, Labels, and Accepted Negatives
+# (interim data, derived from real inputs)
+
+kerala_grid_labeled_1km.gpkg:
+  description: >
+    Full 1km x 1km prediction grid over the Kerala study-area proxy,
+    with target/positive_count assigned from the real Hao et al. (2020)
+    landslide inventory via spatial join.
+  derivation:
+    source_positives: "ml-service/data/raw/kerala_landslide_inventory_2018/Kerela landslide.shp"
+    study_area_method: "convex_hull_of_positives_buffered (PROXY, not authoritative Kerala boundary)"
+    study_area_buffer_m: 5000.0
+    grid_cell_size_m: 1000.0
+    grid_inclusion_rule: "cell included if its polygon intersects the (proxy) study area"
+    label_join_predicate: "intersects"
+    code: "ml-service/src/features/grid.py (build_study_area_proxy, build_prediction_grid, assign_landslide_labels)"
+  crs: "EPSG:32643 (UTM 43N)"
+  record_count: 42620
+  positive_cells: 2139
+  positive_count_sum_check: "4728 (matches raw positive record count exactly, confirms no point lost)"
+  generated: "2026-09-03"
+  checksum_md5: "c499b8ab29988ddc2923f1f08003b42c"
+  status: "REAL — computed from real input data, no fabrication. Grid geometry itself is real and reproducible; study-area extent is an explicit proxy, not an authoritative boundary."
+
+kerala_grid_negatives_accepted_3to1.gpkg:
+  description: >
+    Accepted negative grid cells selected via the buffered, coverage-
+    aware, spatially-stratified strategy in docs/negative_sampling.md,
+    implemented in ml-service/src/features/grid.py::select_negative_grid_cells.
+  derivation:
+    buffer_m: 2000.0
+    buffer_basis: "union of (a) buffer around raw landslide points and (b) buffer around positive CELL polygons -- see docs/training_dataset_build.md for why both are needed"
+    stratification: "coarse 4x4 spatial block grid over the study bounding box (proxy for district-based stratification -- no real admin boundary joined to the grid)"
+    sampling_ratio_target: "3:1 negative:positive (documented choice, see docs/negative_sampling.md and docs/training_dataset_build.md for reasoning)"
+    random_state: 42
+  crs: "EPSG:32643 (UTM 43N)"
+  record_count: 6417
+  positive_cells_for_ratio: 2139
+  candidate_negative_cells_before_cap: 30309
+  buffer_excluded_cells: 10172
+  spatial_leakage_check: "PASSED, 0 flagged (min separation 1999m, checked cell-polygon to cell-polygon)"
+  generated: "2026-09-03"
+  checksum_md5: "160b3e7c4d0d2318866d58d81d62cf4a"
+  status: >
+    REAL — computed from real input data. This is a CANDIDATE negative
+    set for pipeline development, not a finalized training label set:
+    terrain-matching refinement (docs/negative_sampling.md §1.5) and
+    observation-coverage-aware sampling (§1.4) remain unimplemented, and
+    the sensitivity analysis required by docs/negative_sampling.md §3
+    has not been run.

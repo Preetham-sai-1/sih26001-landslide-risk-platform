@@ -1,0 +1,175 @@
+# ml-service/src/data/feature_policy.yaml
+#
+# Machine-readable feature policy for the SIH26001 Kerala landslide
+# inventory, derived directly from the forensic audit in
+# docs/inventory_attribute_audit.md (Phase 3B). This file is the
+# authoritative, code-consumable source of truth for which raw
+# inventory fields may be used downstream — pipeline code should read
+# this file rather than re-deciding field-by-field.
+#
+# STATUS: reflects the RAW INVENTORY FILE'S OWN FIELDS ONLY. It does not
+# yet include external features (rainfall, DEM, land cover, NDVI, soil)
+# planned in docs/data_dictionary.md -- those are governed by that
+# document and docs/spatial_alignment.md, not this file, until they are
+# actually joined to this inventory.
+#
+# Nothing in this file has been used to train a model. No negative
+# samples have been constructed using this policy yet.
+
+dataset:
+  name: "Hao et al. (2020) Kerala 2018 monsoon landslide inventory"
+  source_file: "ml-service/data/raw/kerala_landslide_inventory_2018/Kerela landslide.shp"
+  record_count: 4728
+  crs: "EPSG:4326"
+  audit_document: "docs/inventory_attribute_audit.md"
+
+# Fields judged safe to use as model inputs (directly, or as a join key
+# for geometry). Per instruction, nothing uncertain is included here --
+# every field below has a specific, stated justification in
+# docs/inventory_attribute_audit.md Task 2/3, and fields marked
+# "requires verification" there are NOT included here.
+allowed_features:
+  - field: "geometry"
+    role: "spatial_join_key"
+    reason: >
+      Point location used to join against external DEM/rainfall/land-cover/
+      NDVI layers. Not used as a direct numeric feature value itself.
+      Z coordinate is explicitly excluded -- confirmed constant 0.0 for
+      all 4728 records, not elevation (docs/inventory_attribute_audit.md
+      Task 4).
+
+# Fields judged unsafe to use directly as pre-event predictive features,
+# because they represent information only knowable after a landslide
+# occurred (damage, post-event classification, survey outcomes, or a
+# field statistically shown to shift post-event).
+excluded_features:
+  post_event_information:
+    - field: "Type_of_sl"
+      reason: "Landslide process classification (debris flow / shallow slide / rock fall); an intrinsic outcome characteristic, unobservable before occurrence."
+    - field: "Length"
+      reason: "Physical dimension of the landslide itself; 0 used as a 'not measured' sentinel for 420 records, never a real pre-event quantity."
+    - field: "Width"
+      reason: "Same reasoning as Length."
+    - field: "Area"
+      reason: "Same reasoning as Length/Width; 0.0 confirmed as a missing-value sentinel, not a true zero (docs/inventory_attribute_audit.md Task 1)."
+    - field: "Building_I"
+      reason: "Post-event building damage count; a consequence, not a pre-event condition."
+    - field: "Road_impac"
+      reason: "Post-event road damage/impact category."
+    - field: "Impact_Agr"
+      reason: "Post-event agricultural impact category."
+    - field: "Specific_r"
+      reason: "Post-event field-survey causal judgment about why the landslide occurred; 81.73% missing."
+    - field: "Remarks"
+      reason: "Free-text post-event field notes (e.g. 'Road blocked'); not a pre-event condition."
+    - field: "LU_2018"
+      reason: >
+        707 of 4728 records (14.95%) show a different land-use code than
+        LU_2010 at the same point -- consistent with the landslide's own
+        disturbance being reflected in this attribute. Using it as a
+        pre-event predictor risks the outcome leaking into the feature.
+  detection_source_metadata:
+    - field: "NRSC"
+      reason: "Flags whether NRSC's automated detection found this record; only exists for confirmed positives by construction -- cannot be defined for a true negative."
+    - field: "GSI"
+      reason: "Same reasoning as NRSC, for the GSI field survey."
+    - field: "New"
+      reason: "Flags whether the study authors newly digitized this record; same structural leakage issue."
+  identifier_or_redundant_metadata:
+    - field: "No"
+      reason: "Behaves as a record identifier; undocumented meaning of its many zero values; carries no physical/predictive information."
+    - field: "POINT_X"
+      reason: "Redundant coordinate field found to diverge from the actual geometry by up to ~150m (docs/inventory_attribute_audit.md Task 4); geometry is authoritative."
+    - field: "POINT_Y"
+      reason: "Same reasoning as POINT_X."
+    - field: "geometry_z"
+      reason: "Constant 0.0 across all 4728 records; confirmed not to represent elevation; carries no information."
+
+target_fields:
+  # The inventory itself provides only POSITIVE examples (a landslide is
+  # confirmed at this location). There is no negative-class field in
+  # this raw file. A `target` column does not yet exist and must be
+  # constructed via the negative-sampling strategy in
+  # docs/negative_sampling.md -- this section documents intent, not a
+  # field that currently exists in the shapefile.
+  - field: "target"
+    status: "NOT YET CONSTRUCTED"
+    reason: >
+      All 4728 raw records represent confirmed positives. Negative
+      samples have not been constructed (explicitly deferred per Phase
+      3B instructions). This dataset cannot be used for supervised
+      training until target construction is completed and itself
+      audited for leakage.
+
+metadata_fields:
+  - field: "No"
+    reason: "See identifier_or_redundant_metadata above; listed here too since it is fundamentally a bookkeeping/identifier field."
+  - field: "District"
+    reason: >
+      Administrative geography. Not classified as excluded, but also not
+      in allowed_features -- see requires_verification below. Retained
+      as metadata for stratification/reporting purposes (e.g.
+      docs/negative_sampling.md spatial stratification) even while its
+      use as a direct predictive feature remains unresolved.
+
+leakage_risk_fields:
+  - field: "RASTERVALU"
+    reason: >
+      Source raster is undocumented. Field-naming convention (a default
+      GIS "Extract Values to Points" output name) means it was almost
+      certainly sampled from some raster layer at each landslide point --
+      raising a real, undismissable possibility that the source raster
+      was itself derived using knowledge of these same landslide
+      locations, which would make it circularly post-event even though
+      it is not an explicit "damage" field. Cannot be ruled in or out
+      from the data alone.
+    status: "EXCLUDED until source raster is identified and confirmed pre-event and independent of this inventory."
+  - field: "Reclass_Sl"
+    reason: >
+      Statistically confirmed (docs/inventory_attribute_audit.md Task 3)
+      to be a ~5-unit-interval reclassification of RASTERVALU. Inherits
+      RASTERVALU's unresolved provenance risk entirely.
+    status: "EXCLUDED for the same reason as RASTERVALU."
+
+requires_verification:
+  - field: "District"
+    what_to_verify: >
+      Whether district-level variation reflects genuine regional
+      susceptibility differences or reflects uneven survey effort/
+      detection bias (the GSI field survey is documented as road-biased,
+      per docs/inventory_metadata_report.md). Needs comparison against
+      independent terrain/rainfall features before being trusted as a
+      causal predictor rather than a survey-coverage proxy.
+  - field: "LU_2010"
+    what_to_verify: >
+      (1) Exact code-to-label mapping is undocumented in materials
+      available in this session (FMP, FDN, BRF, etc. -- category-level
+      meaning is described in the source paper's prose but no verified
+      code table was available). (2) The 2010 snapshot is 8 years stale
+      relative to the actual 2018 event; whether it is an acceptable
+      proxy for pre-event land cover needs an explicit, documented
+      decision, not an assumption.
+  - field: "Road_impac"
+    what_to_verify: >
+      Exact meaning of the C and D codes is undocumented. Even once
+      known, note this field describes IMPACT (post-event), which is
+      why it is already in excluded_features -- listed here only in
+      case a future, differently-defined "distance to road" feature
+      (an independent OSM-derived pre-event feature, per
+      docs/data_dictionary.md) is confused with this field. They are
+      not the same thing and must not be conflated.
+
+notes:
+  - >
+    This policy governs the RAW INVENTORY'S OWN fields only. Once
+    external features (rainfall, DEM-derived terrain, land cover, NDVI,
+    soil) are joined per docs/data_dictionary.md and docs/spatial_alignment.md,
+    this file should be extended (or a companion policy file created) to
+    cover those fields' provenance and any leakage considerations
+    specific to how they are joined (see docs/temporal_alignment.md \u00a75
+    for the WorldCover/Sentinel-2 post-event-imagery risk, which is a
+    distinct concern from anything in this file).
+  - >
+    No field in this file has been used to compute any statistic
+    presented as a model result. This file is a policy/configuration
+    artifact, not a report of model performance.

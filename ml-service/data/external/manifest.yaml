@@ -1,0 +1,98 @@
+# manifest.yaml — External Data Source Acquisition Status (Phase 4)
+#
+# Tracks, per docs/data_sources.md, whether each required external
+# dataset category has actually been downloaded into this repository.
+# Re-verified by direct network testing during Phase 4 (2026-09-03):
+# curl to doi.org, data.humdata.org, earthexplorer.usgs.gov,
+# dataspace.copernicus.eu, imdpune.gov.in, files.isric.org, and
+# gadm.org all returned HTTP 403 from this sandboxed environment's
+# network egress (allowlisted to software-package hosts only). This
+# matches the identical finding from Phase 3. No source below has
+# been fabricated as "available" merely because a URL exists for it.
+
+landslide_inventory:
+  status: "ACQUIRED"
+  detail: "Kerala 2018 (Hao et al. 2020) -- see ml-service/data/raw/kerala_landslide_inventory_2018/manifest.yaml"
+
+ner_landslide_inventory:
+  status: "ACQUIRED (via manual upload, not the Bhuvan/NDEM endpoints investigated)"
+  detail: "8,546 NER records extracted from the 30,842-record national GSI Landslide Inventory. See ml-service/data/raw/ner_landslide_inventory/manifest.yaml 'actual_acquired_dataset' section for full metadata, per-state counts, and data-quality findings (79.4% missing year, 8.6% duplicate coordinates)."
+
+rainfall:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "IMD 0.25 deg gridded daily rainfall (imdpune.gov.in) -- direct download, no confirmed login barrier, but host unreachable from this environment"
+    - "NASA GPM IMERG (GES DISC) -- requires NASA Earthdata login, host unreachable from this environment"
+  blocker: "network egress restriction (verified by direct test, see above)"
+
+dem_elevation:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "USGS SRTM 1 arc-second (EarthExplorer) -- requires free USGS account, host unreachable from this environment"
+    - "ISRO/NRSC CartoDEM (Bhoonidhi) -- portal access terms partially unverified, host unreachable from this environment"
+  blocker: "network egress restriction"
+
+slope_aspect_curvature:
+  status: "NOT DERIVABLE YET"
+  detail: "These are computed FROM a DEM (ml-service/src/data/spatial_standardization.py has the reusable raster utilities, tested on synthetic rasters), but no real DEM is present to derive them from."
+
+land_cover:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "ESA WorldCover 10m 2021 (esa-worldcover.org / AWS Open Data / Zenodo) -- free, CC-BY 4.0, no login barrier documented, host unreachable from this environment"
+  blocker: "network egress restriction"
+
+ndvi_vegetation:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "MODIS MOD13Q1 (NASA LP DAAC) -- requires NASA Earthdata login, host unreachable from this environment"
+  blocker: "network egress restriction"
+
+soil:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "SoilGrids 2.0 (ISRIC) -- REST API confirmed paused as of Phase 2 research; bulk file host also unreachable from this environment"
+  blocker: "network egress restriction (and, independently, a confirmed-paused REST API even when reachable)"
+
+administrative_boundaries:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "geoBoundaries (CC-BY, via HDX) -- host unreachable from this environment"
+    - "GADM (non-commercial license) -- host unreachable from this environment"
+  blocker: "network egress restriction"
+  consequence: >
+    The grid study area used in ml-service/data/interim/ is therefore an
+    explicit PROXY (buffered convex hull of the landslide points), not
+    an authoritative Kerala boundary. See docs/training_dataset_build.md.
+
+roads:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "OpenStreetMap via Overpass API -- host unreachable from this environment"
+  blocker: "network egress restriction"
+
+villages_populated_places:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "OpenStreetMap via Overpass API -- host unreachable from this environment"
+  blocker: "network egress restriction"
+
+critical_infrastructure:
+  status: "NOT ACQUIRED"
+  candidate_sources:
+    - "OpenStreetMap infrastructure tags -- host unreachable from this environment"
+  blocker: "network egress restriction"
+  note: "Priority C / future-optional per docs/data_sources.md; not required to unblock the first model."
+
+summary:
+  acquired_categories: 1
+  total_categories: 10
+  next_action: >
+    A human with unrestricted network access must download at least
+    rainfall, DEM, and land cover (the three categories the feature
+    policy and validation strategy treat as minimally required, per
+    docs/data_dictionary.md and docs/data_sources.md "Minimum Dataset
+    Required to Train a First Model") and either place the files
+    directly in ml-service/data/raw/<source_name>/ following the
+    manifest pattern established for the landslide inventory, or
+    upload them for a future session to process.

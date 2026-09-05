@@ -1,0 +1,77 @@
+# ==============================================================
+# SIH26001 — root .gitignore
+# Covers backend (Spring Boot), ml-service (Python), frontend (React),
+# GIS data, and general environment/secrets hygiene.
+# ==============================================================
+
+# ---- Secrets / environment ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ---- Backend (Java / Spring Boot / Maven / Gradle) ----
+backend/springboot/target/
+backend/springboot/build/
+backend/springboot/.gradle/
+backend/springboot/*.class
+backend/springboot/HELP.md
+
+# ---- ML service (Python) ----
+ml-service/**/__pycache__/
+ml-service/**/*.pyc
+ml-service/.venv/
+ml-service/venv/
+ml-service/.pytest_cache/
+ml-service/.ipynb_checkpoints/
+# Trained model artifacts are build outputs, not source — track via
+# releases/artifact storage, not git, once training exists.
+ml-service/models/*
+!ml-service/models/.gitkeep
+# ---- ML service data: track manifests/docs (small, provenance),
+# exclude large binary geodata (regenerable from source + manifest, or
+# too large for git). This replaced a blanket "ignore everything except
+# .gitkeep" rule that would have hidden the manifest.yaml/audit .md
+# files now present in these directories -- fixed for this handoff.
+ml-service/data/**/*.shp
+ml-service/data/**/*.shx
+ml-service/data/**/*.dbf
+ml-service/data/**/*.prj
+ml-service/data/**/*.cpg
+ml-service/data/**/*.gpkg
+ml-service/data/**/*.parquet
+ml-service/data/**/*.tif
+ml-service/data/**/*.tiff
+ml-service/data/**/*.hgt
+ml-service/data/**/*.grd
+ml-service/data/**/*.nc
+ml-service/data/**/*.hdf
+# Explicitly keep: .gitkeep, manifest.yaml, and any .md provenance/audit
+# docs under data/ (e.g. ACQUISITION_STATUS.md) -- these are small and
+# required for reproducibility, not large generated artifacts.
+
+# ---- Frontend (React / Node) ----
+frontend/react/node_modules/
+frontend/react/dist/
+frontend/react/build/
+frontend/react/.env.local
+
+# ---- GIS data ----
+gis/raw/*
+!gis/raw/.gitkeep
+gis/processed/*
+!gis/processed/.gitkeep
+gis/zones/*
+!gis/zones/.gitkeep
+
+# ---- Docker ----
+*.log

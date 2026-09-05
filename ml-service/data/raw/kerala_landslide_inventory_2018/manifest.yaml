@@ -1,0 +1,62 @@
+# manifest.yaml — Kerala 2018 Landslide Inventory (raw)
+# Machine-readable provenance record for this raw data directory.
+# This file describes metadata ABOUT the data; it does not modify the
+# raw shapefile bundle, which remains untouched (checksums below).
+
+dataset:
+  name: "Hao et al. (2020) Kerala 2018 monsoon landslide inventory"
+  citation: >
+    Hao, L., Rajaneesh A., van Westen, C., Sajinkumar K. S., Martha, T. R.,
+    Jaiswal, P., and McAdoo, B. G. (2020). Constructing a complete
+    landslide inventory dataset for the 2018 monsoon disaster in Kerala,
+    India, for land use change analysis. Earth System Science Data,
+    12(4), 2899-2918. https://doi.org/10.5194/essd-12-2899-2020
+  dataset_doi: "https://doi.org/10.17026/dans-x6c-y7x2"
+  acquisition_method: "User upload (Kerela_landslide.zip), Phase 3B"
+  acquisition_date: "2026-09-02"
+  original_filename: "Kerela_landslide.zip"
+
+files:
+  - name: "Kerela landslide.shp"
+    role: "geometry"
+  - name: "Kerela landslide.dbf"
+    role: "attribute_table"
+  - name: "Kerela landslide.shx"
+    role: "spatial_index"
+  - name: "Kerela landslide.prj"
+    role: "crs_definition"
+  - name: "Kerela landslide.cpg"
+    role: "encoding_definition"
+
+spatial:
+  geometry_type: "Point"
+  crs: "EPSG:4326"
+  record_count: 4728
+  bounding_box:
+    min_lon: 75.015414
+    max_lon: 77.396262389
+    min_lat: 8.474453
+    max_lat: 12.654953
+  note: >
+    Bounding box computed directly from the real file (Phase 3B audit).
+    Not cross-checked against an authoritative Kerala state boundary,
+    since none has been downloaded in this environment.
+
+temporal:
+  event_window: "2018-06-01 to 2018-08-26"
+  per_record_date_field: false
+  note: >
+    No per-record date exists in the source file. See
+    docs/temporal_alignment.md for the full implication of this for
+    feature-window construction.
+
+processing_status: "raw, unmodified, forensically audited (Phase 3B)"
+audit_document: "docs/inventory_attribute_audit.md"
+feature_policy_document: "ml-service/src/data/feature_policy.yaml"
+
+checksums_md5:
+  "Kerela landslide.shp": "2ce99c4d90f9de5e93ac98ca4a7f0796"
+  "Kerela landslide.dbf": "a14725dda06c44d50f378ebb2a1700e8"
+  "Kerela landslide.shx": "1ce4c7bb8233be76fdc73eefe8908448"
+  "Kerela landslide.prj": "c742bee3d4edfc2948a2ad08de1790a5"
+  "Kerela landslide.cpg": "ae3b3df9970b49b6523e608759bc957d"

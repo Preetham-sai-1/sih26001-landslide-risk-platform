@@ -1,0 +1,72 @@
+# SIH26001 — local development orchestration (SCAFFOLD, NOT YET FUNCTIONAL)
+#
+# Status: structural placeholder only. Each service's Dockerfile does not
+# exist yet (see docker/ and per-service directories), so `docker compose up`
+# will not work until those are implemented in a later phase. This file
+# exists now so the intended topology is documented and reviewable before
+# any service code is written.
+#
+# No credentials, ports, or hostnames below are final — all secrets are
+# sourced from a local .env file (git-ignored; see .env.example once added)
+# and never hard-coded here.
+
+version: "3.9"
+
+services:
+  # PostgreSQL + PostGIS: shared spatial data store.
+  # Official image name below is a real, existing image; version pinning
+  # and actual schema/init scripts are a later task.
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # No init SQL wired up yet — schema does not exist until the backend's
+    # JPA entities / migration scripts are implemented.
+
+  # FastAPI ML service — NOT YET IMPLEMENTED.
+  # Uncomment once ml-service/ has a Dockerfile and an actual app to serve.
+  # ml-service:
+  #   build:
+  #     context: ./ml-service
+  #     dockerfile: ../docker/ml-service.Dockerfile
+  #   env_file: .env
+  #   ports:
+  #     - "${ML_SERVICE_PORT:-8000}:8000"
+  #   depends_on:
+  #     - db
+  # NOTE: a separate ml-service/Dockerfile now exists (added for
+  # reproducibility) but it runs the pipeline/test suite, not a served
+  # API -- no FastAPI app exists yet, so this stanza (which assumes a
+  # served app on port 8000) stays commented and unchanged.
+
+  # Spring Boot orchestration service — NOT YET IMPLEMENTED.
+  # backend:
+  #   build:
+  #     context: ./backend/springboot
+  #     dockerfile: ../../docker/backend.Dockerfile
+  #   env_file: .env
+  #   ports:
+  #     - "${BACKEND_PORT:-8080}:8080"
+  #   depends_on:
+  #     - db
+  #     # - ml-service
+
+  # React + TypeScript + Leaflet dashboard — NOT YET IMPLEMENTED.
+  # frontend:
+  #   build:
+  #     context: ./frontend/react
+  #     dockerfile: ../../docker/frontend.Dockerfile
+  #   ports:
+  #     - "${FRONTEND_PORT:-3000}:3000"
+  #   depends_on:
+  #     - backend
+
+volumes:
+  postgres_data:
