@@ -43,4 +43,17 @@ public interface ZoneRepository extends JpaRepository<ZoneEntity, String> {
         ORDER BY latitude, longitude
         """, nativeQuery = true)
     List<ZoneEntity> findNearbyZones(@Param("lat") Double lat, @Param("lon") Double lon, @Param("maxDistKm") Double maxDistKm);
+
+    @Query(value = """
+        SELECT *
+        FROM zones
+        WHERE (
+            6371 * acos(
+                cos(radians(:lat)) * cos(radians(latitude)) *
+                cos(radians(longitude) - radians(:lon)) +
+                sin(radians(:lat)) * sin(radians(latitude))
+            )
+        ) <= (:radiusMeters / 1000.0)
+        """, nativeQuery = true)
+    List<ZoneEntity> findZonesWithinMeters(@Param("lat") Double lat, @Param("lon") Double lon, @Param("radiusMeters") Double radiusMeters);
 }

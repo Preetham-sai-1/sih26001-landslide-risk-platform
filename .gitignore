@@ -55,6 +55,20 @@ ml-service/data/**/*.hgt
 ml-service/data/**/*.grd
 ml-service/data/**/*.nc
 ml-service/data/**/*.hdf
+ml-service/data/**/*.zip
+ml-service/data/**/*.gz
+ml-service/data/**/*.pdf
+ml-service/data/**/*.xml
+ml-service/data/**/*.html
+ml-service/data/**/*.sbn
+ml-service/data/**/*.sbx
+ml-service/data/**/*.txt
+ml-service/data/raw/*
+!ml-service/data/raw/.gitkeep
+!ml-service/data/raw/**/manifest.yaml
+ml-service/data/external/*
+!ml-service/data/external/.gitkeep
+!ml-service/data/external/**/manifest.yaml
 # Explicitly keep: .gitkeep, manifest.yaml, and any .md provenance/audit
 # docs under data/ (e.g. ACQUISITION_STATUS.md) -- these are small and
 # required for reproducibility, not large generated artifacts.

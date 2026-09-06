@@ -1,72 +1,68 @@
-# SIH26001 — local development orchestration (SCAFFOLD, NOT YET FUNCTIONAL)
-#
-# Status: structural placeholder only. Each service's Dockerfile does not
-# exist yet (see docker/ and per-service directories), so `docker compose up`
-# will not work until those are implemented in a later phase. This file
-# exists now so the intended topology is documented and reviewable before
-# any service code is written.
-#
-# No credentials, ports, or hostnames below are final — all secrets are
-# sourced from a local .env file (git-ignored; see .env.example once added)
-# and never hard-coded here.
-
-version: "3.9"
+version: '3.8'
 
 services:
-  # PostgreSQL + PostGIS: shared spatial data store.
-  # Official image name below is a real, existing image; version pinning
-  # and actual schema/init scripts are a later task.
   db:
-    image: postgis/postgis:16-3.4
-    restart: unless-stopped
+    image: postgis/postgis:16-3.4-alpine
+    container_name: sih26001-postgis
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: sih26001_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    # No init SQL wired up yet — schema does not exist until the backend's
-    # JPA entities / migration scripts are implemented.
+      - sih_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sih26001_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  # FastAPI ML service — NOT YET IMPLEMENTED.
-  # Uncomment once ml-service/ has a Dockerfile and an actual app to serve.
-  # ml-service:
-  #   build:
-  #     context: ./ml-service
-  #     dockerfile: ../docker/ml-service.Dockerfile
-  #   env_file: .env
-  #   ports:
-  #     - "${ML_SERVICE_PORT:-8000}:8000"
-  #   depends_on:
-  #     - db
-  # NOTE: a separate ml-service/Dockerfile now exists (added for
-  # reproducibility) but it runs the pipeline/test suite, not a served
-  # API -- no FastAPI app exists yet, so this stanza (which assumes a
-  # served app on port 8000) stays commented and unchanged.
+  fastapi:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    container_name: sih26001-fastapi
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-  # Spring Boot orchestration service — NOT YET IMPLEMENTED.
-  # backend:
-  #   build:
-  #     context: ./backend/springboot
-  #     dockerfile: ../../docker/backend.Dockerfile
-  #   env_file: .env
-  #   ports:
-  #     - "${BACKEND_PORT:-8080}:8080"
-  #   depends_on:
-  #     - db
-  #     # - ml-service
+  spring:
+    build:
+      context: ./backend/springboot
+      dockerfile: Dockerfile
+    container_name: sih26001-spring
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/sih26001_dev
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      FASTAPI_BASE_URL: http://fastapi:8000
+    depends_on:
+      db:
+        condition: service_healthy
+      fastapi:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # React + TypeScript + Leaflet dashboard — NOT YET IMPLEMENTED.
-  # frontend:
-  #   build:
-  #     context: ./frontend/react
-  #     dockerfile: ../../docker/frontend.Dockerfile
-  #   ports:
-  #     - "${FRONTEND_PORT:-3000}:3000"
-  #   depends_on:
-  #     - backend
+  frontend:
+    build:
+      context: ./frontend/react
+      dockerfile: Dockerfile
+    container_name: sih26001-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - spring
 
 volumes:
-  postgres_data:
+  sih_pgdata:

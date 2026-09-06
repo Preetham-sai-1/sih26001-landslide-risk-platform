@@ -63,8 +63,9 @@ export async function fetchRiskZones(stateFilter?: string, riskFilter?: string):
 
     const res = await fetch(`${API_BASE}/zones?${params.toString()}`);
     if (!res.ok) throw new Error(`API response status ${res.status}`);
-    const json = await res.json();
-    let zonesList = json.zones || DEMO_ZONES;
+    const rawJson = await res.json();
+    const json = rawJson.data !== undefined ? rawJson.data : rawJson;
+    let zonesList = json.zones || (Array.isArray(json) ? json : DEMO_ZONES);
     // Fallback if API returned fewer zones than grid mesh
     if (zonesList.length < DEMO_ZONES.length) {
       zonesList = DEMO_ZONES;
@@ -93,7 +94,8 @@ export async function fetchZoneDetails(gridId: string): Promise<{ details: ZoneD
   try {
     const res = await fetch(`${API_BASE}/zones/${gridId}`);
     if (!res.ok) throw new Error(`API response status ${res.status}`);
-    const json = await res.json();
+    const rawJson = await res.json();
+    const json = rawJson.data !== undefined ? rawJson.data : rawJson;
     return { details: json, isDemo: false };
   } catch (err) {
     const zone = DEMO_ZONES.find(z => z.grid_id === gridId) || DEMO_ZONES[0];
@@ -145,8 +147,10 @@ export async function submitFieldReport(reportData: Partial<FieldReport>): Promi
       body: JSON.stringify(reportData)
     });
     if (!res.ok) throw new Error(`API status ${res.status}`);
-    const json = await res.json();
-    return { success: true, report: json.report, isDemo: false };
+    const rawJson = await res.json();
+    const json = rawJson.data !== undefined ? rawJson.data : rawJson;
+    const report = json.report || json;
+    return { success: true, report, isDemo: false };
   } catch (err) {
     console.warn("Backend API unavailable. Saving report in local DEMO_MODE database.", err);
     const newReport: FieldReport = {
@@ -177,8 +181,10 @@ export async function dispatchBroadcastAlert(alertData: { target_state: string; 
       body: JSON.stringify(alertData)
     });
     if (!res.ok) throw new Error(`API status ${res.status}`);
-    const json = await res.json();
-    return { success: true, dispatchLog: json.dispatch_log, isDemo: false };
+    const rawJson = await res.json();
+    const json = rawJson.data !== undefined ? rawJson.data : rawJson;
+    const dispatchLog = json.dispatch_log || json;
+    return { success: true, dispatchLog, isDemo: false };
   } catch (err) {
     console.warn("Backend API unavailable. Dispatching alert in local DEMO_MODE.", err);
     const targetCount = alertData.target_district === "Dima Hasao" ? 14250 : 9500;
@@ -397,7 +403,8 @@ export async function fetchLiveWeather() {
   try {
     const res = await fetch(`${API_BASE}/live/weather`);
     if (!res.ok) throw new Error(`API status ${res.status}`);
-    return await res.json();
+    const rawJson = await res.json();
+    return rawJson.data !== undefined ? rawJson.data : rawJson;
   } catch (err) {
     console.warn("Backend live weather API unavailable. Using DEMO_MODE telemetry feed.", err);
     return {
@@ -424,7 +431,8 @@ export async function fetchLiveStatus() {
   try {
     const res = await fetch(`${API_BASE}/live/status`);
     if (!res.ok) throw new Error(`API status ${res.status}`);
-    return await res.json();
+    const rawJson = await res.json();
+    return rawJson.data !== undefined ? rawJson.data : rawJson;
   } catch (err) {
     return {
       status: "OFFLINE",
@@ -448,7 +456,8 @@ export async function fetchLiveWarnings() {
   try {
     const res = await fetch(`${API_BASE}/live/warnings`);
     if (!res.ok) throw new Error(`API status ${res.status}`);
-    return await res.json();
+    const rawJson = await res.json();
+    return rawJson.data !== undefined ? rawJson.data : rawJson;
   } catch (err) {
     const warnings = DEMO_LIVE_WEATHER_STATIONS
       .filter(s => s.warning_level !== 'GREEN')
@@ -483,7 +492,8 @@ export async function fetchMLPrediction(
     });
     const res = await fetch(`${API_BASE}/ml/predict/${gridId}?${params.toString()}`);
     if (!res.ok) throw new Error(`ML API status ${res.status}`);
-    const json = await res.json();
+    const rawJson = await res.json();
+    const json = rawJson.data !== undefined ? rawJson.data : rawJson;
     return { prediction: json, isDemo: false };
   } catch (err) {
     console.warn("Backend ML API unavailable. Using calibrated fallback ML prediction engine.", err);
@@ -542,7 +552,8 @@ export async function fetchMLExplanation(gridId: string) {
   try {
     const res = await fetch(`${API_BASE}/ml/explain/${gridId}`);
     if (!res.ok) throw new Error(`ML Explain API status ${res.status}`);
-    return await res.json();
+    const rawJson = await res.json();
+    return rawJson.data !== undefined ? rawJson.data : rawJson;
   } catch (err) {
     const { prediction } = await fetchMLPrediction(gridId);
     return {
@@ -558,7 +569,8 @@ export async function fetchMLModelInfo(): Promise<MLModelInfo> {
   try {
     const res = await fetch(`${API_BASE}/ml/model-info`);
     if (!res.ok) throw new Error(`ML Model Info API status ${res.status}`);
-    return await res.json();
+    const rawJson = await res.json();
+    return rawJson.data !== undefined ? rawJson.data : rawJson;
   } catch (err) {
     return {
       is_loaded: true,
