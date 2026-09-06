@@ -94,6 +94,31 @@ export const RequestsCenter: React.FC<RequestsCenterProps> = ({
         )}
       </div>
 
+      {/* Incident Lifecycle Timeline Banner */}
+      <div className="bg-slate-900/90 px-4 py-2 border-b border-slate-800 flex flex-wrap items-center justify-between text-xs shrink-0 font-mono gap-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto py-1">
+          <span className="text-[10px] text-slate-400 font-bold uppercase mr-1">Lifecycle:</span>
+          {['NORMAL', 'WATCH', 'HIGH', 'CRITICAL', 'VERIFICATION', 'CONFIRMED', 'RESOLVED'].map((stg, i) => (
+            <React.Fragment key={stg}>
+              <span className={`px-2 py-0.5 rounded text-[9px] font-black border ${
+                stg === 'CONFIRMED' ? 'bg-red-500/20 text-red-300 border-red-500/40' :
+                stg === 'VERIFICATION' ? 'bg-amber-500/20 text-amber-300 border-amber-500/40' :
+                stg === 'RESOLVED' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' :
+                'bg-slate-950 text-slate-400 border-slate-800'
+              }`}>
+                {stg}
+              </span>
+              {i < 6 && <span className="text-slate-600">→</span>}
+            </React.Fragment>
+          ))}
+        </div>
+
+        <div className="text-[10px] text-amber-400 font-bold bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-500/30 flex items-center gap-1">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+          <span>RULE: ML Risk Prediction ≠ Incident Confirmation (Physical Ground Inspection Required)</span>
+        </div>
+      </div>
+
       {/* Filter & Search Strip */}
       <div className="p-3 bg-slate-900/40 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3 shrink-0 text-xs">
         <div className="flex items-center gap-2 flex-1 max-w-md">

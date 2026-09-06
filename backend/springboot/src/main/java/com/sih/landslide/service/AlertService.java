@@ -2,6 +2,7 @@ package com.sih.landslide.service;
 
 import com.sih.landslide.entity.AlertEntity;
 import com.sih.landslide.entity.AuditLogEntity;
+import com.sih.landslide.entity.NotificationEntity;
 import com.sih.landslide.repository.AlertRepository;
 import com.sih.landslide.repository.AuditLogRepository;
 import jakarta.annotation.PostConstruct;
@@ -16,10 +17,15 @@ public class AlertService {
 
     private final AlertRepository alertRepository;
     private final AuditLogRepository auditLogRepository;
+    private final NotificationService notificationService;
 
-    public AlertService(AlertRepository alertRepository, AuditLogRepository auditLogRepository) {
+    public AlertService(
+            AlertRepository alertRepository,
+            AuditLogRepository auditLogRepository,
+            NotificationService notificationService) {
         this.alertRepository = alertRepository;
         this.auditLogRepository = auditLogRepository;
+        this.notificationService = notificationService;
     }
 
     @PostConstruct
@@ -89,17 +95,33 @@ public class AlertService {
 
         AlertEntity saved = alertRepository.save(alert);
 
+        // Dispatch REAL SMS and Voice Notifications
+        List<NotificationEntity> notifications = notificationService.dispatchAlertNotifications(
+                saved.getId(),
+                saved.getTargetDistrict() + " Sector",
+                saved.getTargetDistrict(),
+                saved.getTargetState(),
+                saved.getHazardLevel(),
+                88.4,
+                8.5,
+                "124 mm / 24h",
+                "UNVERIFIED",
+                "AUTHORITY",
+                true
+        );
+
         auditLogRepository.save(new AuditLogEntity(
             Instant.now(),
             "ALERT_DISPATCH",
             "DISPATCH_BROADCAST",
             "Spring Boot Disaster Cell Officer",
-            "Dispatched " + saved.getHazardLevel() + " alert to " + saved.getTargetDistrict() + ", " + saved.getTargetState()
+            "Dispatched " + saved.getHazardLevel() + " alert to " + saved.getTargetDistrict() + ", " + saved.getTargetState() + " (Notifications: " + notifications.size() + ")"
         ));
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Broadcast alert dispatched to " + saved.getTargetDistrict() + ", " + saved.getTargetState() + " and logged in DB");
         response.put("dispatch_log", saved);
+        response.put("notifications", notifications);
         response.put("is_duplicate", false);
         return response;
     }

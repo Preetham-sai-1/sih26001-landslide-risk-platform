@@ -11,7 +11,7 @@ import {
   UserCheck
 } from 'lucide-react';
 
-export type UserRole = 'ADMIN' | 'FIELD_OFFICER' | 'CITIZEN';
+export type UserRole = 'ADMIN' | 'AUTHORITY' | 'FIELD_OFFICER' | 'VIEWER' | 'CITIZEN';
 
 interface NavbarProps {
   currentView: ViewMode;
@@ -140,8 +140,9 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="bg-transparent text-amber-400 font-extrabold focus:outline-none cursor-pointer text-[10px]"
             >
               <option value="ADMIN" className="bg-slate-900 text-amber-400">ADMIN</option>
+              <option value="AUTHORITY" className="bg-slate-900 text-purple-400">AUTHORITY</option>
               <option value="FIELD_OFFICER" className="bg-slate-900 text-emerald-400">FIELD OFFICER</option>
-              <option value="CITIZEN" className="bg-slate-900 text-cyan-400">CITIZEN</option>
+              <option value="VIEWER" className="bg-slate-900 text-slate-400">VIEWER</option>
             </select>
           </div>
         )}

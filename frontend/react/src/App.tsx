@@ -36,6 +36,7 @@ import { Sidebar } from './components/Sidebar';
 import { StatsOverview } from './components/StatsOverview';
 import { RiskMap } from './components/RiskMap';
 import { ZoneInspector } from './components/ZoneInspector';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { RightOperationsPanel } from './components/RightOperationsPanel';
 import { EarlyWarningCenter } from './components/EarlyWarningCenter';
 import { LiveWeatherCenter } from './components/LiveWeatherCenter';
@@ -233,9 +234,15 @@ export const App: React.FC = () => {
     if (role === 'ADMIN') {
       setCurrentView('overview');
       showToast("Switched to SDMA Admin Command Center View");
+    } else if (role === 'AUTHORITY') {
+      setCurrentView('requests');
+      showToast("Switched to State Disaster Management Authority (SDMA) Verification & Confirmation Mode");
     } else if (role === 'FIELD_OFFICER') {
       setCurrentView('field_report');
       showToast("Switched to Field Patrol & Ground Verification Mode");
+    } else if (role === 'VIEWER') {
+      setCurrentView('overview');
+      showToast("Switched to Read-Only Viewer Mode (Operational Actions Disabled)");
     } else if (role === 'CITIZEN') {
       setCurrentView('citizen_view');
       showToast("Switched to Public Citizen Emergency Advisory View");
@@ -532,42 +539,44 @@ export const App: React.FC = () => {
                   />
                 </div>
 
-                {selectedZone ? (
-                  <ZoneInspector
-                    zone={selectedZone}
-                    details={selectedDetails}
-                    onClose={() => setSelectedZone(null)}
-                    onDispatchAlert={(z) => {
-                      setSelectedZone(z);
-                      setCurrentView('alerts');
-                    }}
-                    onOpenFieldReport={(z) => {
-                      setSelectedZone(z);
-                      setIsFieldModalOpen(true);
-                    }}
-                    onCreateResponsePlan={handleCreateResponsePlan}
-                    isDemoMode={isDemoMode}
-                    simulatedMm={simulatedMm}
-                    onSimulateRainfall={setSimulatedMm}
-                    forecastHorizon={forecastHorizon}
-                    liveWeatherStations={liveWeatherStations}
-                    liveStatus={liveStatus}
-                    isAutoAlertingEnabled={isAutoAlertingEnabled}
-                    onToggleAutoAlerting={handleToggleAutoAlerting}
-                    onAcknowledgeAlert={handleAcknowledgeAutoAlert}
-                    onManualOverride={handleManualOverride}
-                    onRunDemoSequence={handleRunDemoSequence}
-                    activeAutoAlerts={autoAlertRecords}
-                  />
-                ) : (
-                  <RightOperationsPanel
-                    zones={zones}
-                    onSelectZone={handleSelectZone}
-                    reports={reports}
-                    alerts={alerts}
-                    onViewAllRequests={() => setCurrentView('requests')}
-                    onViewAllAlerts={() => setCurrentView('alerts')}
-                  />
+                <RightOperationsPanel
+                  zones={zones}
+                  onSelectZone={handleSelectZone}
+                  reports={reports}
+                  alerts={alerts}
+                  onViewAllRequests={() => setCurrentView('requests')}
+                  onViewAllAlerts={() => setCurrentView('alerts')}
+                />
+
+                {selectedZone && (
+                  <ErrorBoundary>
+                    <ZoneInspector
+                      zone={selectedZone}
+                      details={selectedDetails}
+                      onClose={() => setSelectedZone(null)}
+                      onDispatchAlert={(z) => {
+                        setSelectedZone(z);
+                        setCurrentView('alerts');
+                      }}
+                      onOpenFieldReport={(z) => {
+                        setSelectedZone(z);
+                        setIsFieldModalOpen(true);
+                      }}
+                      onCreateResponsePlan={handleCreateResponsePlan}
+                      isDemoMode={isDemoMode}
+                      simulatedMm={simulatedMm}
+                      onSimulateRainfall={setSimulatedMm}
+                      forecastHorizon={forecastHorizon}
+                      liveWeatherStations={liveWeatherStations}
+                      liveStatus={liveStatus}
+                      isAutoAlertingEnabled={isAutoAlertingEnabled}
+                      onToggleAutoAlerting={handleToggleAutoAlerting}
+                      onAcknowledgeAlert={handleAcknowledgeAutoAlert}
+                      onManualOverride={handleManualOverride}
+                      onRunDemoSequence={handleRunDemoSequence}
+                      activeAutoAlerts={autoAlertRecords}
+                    />
+                  </ErrorBoundary>
                 )}
               </div>
             </div>
@@ -681,6 +690,25 @@ export const App: React.FC = () => {
               zones={zones}
               isDarkMode={isDarkMode}
               onSelectZone={handleSelectZone}
+            />
+          )}
+
+          {/* VIEW 11: DATA SOURCES & PROVENANCE */}
+          {currentView === 'data_sources' && (
+            <DataSourcesModal
+              isOpen={true}
+              onClose={() => setCurrentView('overview')}
+              liveStatus={liveStatus}
+            />
+          )}
+
+          {/* VIEW 12: SYSTEM HEALTH & TELEMETRY */}
+          {currentView === 'system_health' && (
+            <SystemHealthModal
+              isOpen={true}
+              onClose={() => setCurrentView('overview')}
+              isOnline={isOnline}
+              pendingSyncCount={pendingSyncCount}
             />
           )}
         </main>

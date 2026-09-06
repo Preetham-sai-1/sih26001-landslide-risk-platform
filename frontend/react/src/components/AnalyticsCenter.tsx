@@ -156,7 +156,7 @@ export const AnalyticsCenter: React.FC<AnalyticsCenterProps> = ({
             <span className="text-2xl font-black text-indigo-400 font-mono">{alerts.length} Alerts</span>
             <span className="text-xs text-emerald-400 font-mono">{reports.length} Reports</span>
           </div>
-          <span className="text-[10px] text-slate-400 block">Ground Truth Sync: 100% Active</span>
+          <span className="text-[10px] text-slate-400 block">Ground Truth Sync: Synchronized</span>
         </div>
       </div>
 

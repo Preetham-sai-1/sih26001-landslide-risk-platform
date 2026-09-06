@@ -130,7 +130,7 @@ export const MapLayerControl: React.FC<MapLayerControlProps> = ({
 
           <div className="p-2.5 border-t border-slate-800 bg-slate-950/80 text-[10px] text-slate-400 flex items-center justify-between">
             <span>Simultaneous Layer Fusion Active</span>
-            <span className="font-mono text-emerald-400 font-bold">100% Vector GPU</span>
+            <span className="font-mono text-emerald-400 font-bold">Leaflet GeoJSON Render Engine</span>
           </div>
         </div>
       )}

@@ -142,7 +142,7 @@ export const ZoneInspector: React.FC<ZoneInspectorProps> = ({
   };
 
   return (
-    <div className="w-84 xl:w-96 h-full bg-slate-950/95 backdrop-blur-xl border-l border-slate-800 flex flex-col z-20 shadow-2xl overflow-hidden select-none animate-in slide-in-from-right duration-200 shrink-0 text-slate-100">
+    <div className="fixed top-0 right-0 bottom-0 w-80 sm:w-96 z-40 bg-slate-950/95 backdrop-blur-xl border-l border-slate-800 flex flex-col shadow-2xl overflow-hidden select-none animate-in slide-in-from-right duration-200 text-slate-100">
       {/* Header Bar */}
       <div className="p-3.5 border-b border-slate-800 bg-slate-900/90 flex items-center justify-between">
         <div>
@@ -440,11 +440,19 @@ export const ZoneInspector: React.FC<ZoneInspectorProps> = ({
                 <div className="space-y-2">
                   <span className="text-[10px] uppercase font-bold text-slate-400 block">SHAP / XGBoost Feature Importances</span>
                   <div className="space-y-1.5">
-                    {(mlPred?.model_explainability?.top_contributing_factors || simResult.rankedFactors.map(f => ({
-                      factor: f.name,
-                      weight: Math.round(f.weight * 100),
-                      detail: f.valStr
-                    }))).map((f, idx) => (
+                    {(
+                      Array.isArray(mlPred?.model_explainability?.top_contributing_factors)
+                        ? mlPred.model_explainability.top_contributing_factors.map((f: any) => ({
+                            factor: f.factor || f.feature || 'Factor',
+                            weight: typeof f.weight === 'number' ? f.weight : (typeof f.weight_pct === 'number' ? f.weight_pct : (parseFloat(f.weight || f.weight_pct || 0) || 0)),
+                            detail: f.detail || f.observed_value || ''
+                          }))
+                        : simResult.rankedFactors.map(f => ({
+                            factor: f.name,
+                            weight: Math.round(f.weight * 100),
+                            detail: f.valStr
+                          }))
+                    ).map((f, idx) => (
                       <div key={idx} className="space-y-0.5">
                         <div className="flex items-center justify-between text-[10px]">
                           <span className="text-slate-300 font-semibold truncate max-w-[190px]">{f.factor}</span>
@@ -452,7 +460,7 @@ export const ZoneInspector: React.FC<ZoneInspectorProps> = ({
                         </div>
                         <div className="text-[8px] font-mono text-slate-500">{f.detail}</div>
                         <div className="w-full bg-slate-900 h-1.5 rounded-full overflow-hidden">
-                          <div className="bg-gradient-to-r from-brand-500 to-amber-500 h-full" style={{ width: `${Math.min(100, typeof f.weight === 'number' ? f.weight : parseFloat(f.weight))}%` }} />
+                          <div className="bg-gradient-to-r from-brand-500 to-amber-500 h-full" style={{ width: `${Math.min(100, Math.max(0, typeof f.weight === 'number' ? f.weight : parseFloat(f.weight || 0)))}%` }} />
                         </div>
                       </div>
                     ))}
@@ -463,11 +471,21 @@ export const ZoneInspector: React.FC<ZoneInspectorProps> = ({
                 <div className="pt-2 border-t border-slate-800 space-y-1.5">
                   <span className="text-[10px] uppercase font-bold text-indigo-400 block">Scenario Projections</span>
                   <div className="grid grid-cols-3 gap-1">
-                    {(mlPred?.scenario_projections || [
-                      { horizon: '+6H', projected_probability: 0.85, projected_risk_level: 'HIGH' },
-                      { horizon: '+12H', projected_probability: 0.91, projected_risk_level: 'VERY HIGH' },
-                      { horizon: '+24H', projected_probability: 0.96, projected_risk_level: 'VERY HIGH' }
-                    ]).map((proj, i) => (
+                    {(
+                      Array.isArray(mlPred?.scenario_projections)
+                        ? mlPred.scenario_projections
+                        : (mlPred?.scenario_projections && typeof mlPred.scenario_projections === 'object'
+                            ? [
+                                { horizon: '+6H', projected_probability: ((mlPred.scenario_projections as any).P_next_6h_pct || 85) / 100, projected_risk_level: 'HIGH' },
+                                { horizon: '+12H', projected_probability: ((mlPred.scenario_projections as any).P_next_12h_pct || 91) / 100, projected_risk_level: 'VERY HIGH' },
+                                { horizon: '+24H', projected_probability: ((mlPred.scenario_projections as any).P_next_24h_pct || 96) / 100, projected_risk_level: 'VERY HIGH' }
+                              ]
+                            : [
+                                { horizon: '+6H', projected_probability: 0.85, projected_risk_level: 'HIGH' },
+                                { horizon: '+12H', projected_probability: 0.91, projected_risk_level: 'VERY HIGH' },
+                                { horizon: '+24H', projected_probability: 0.96, projected_risk_level: 'VERY HIGH' }
+                              ])
+                    ).map((proj: any, i: number) => (
                       <div key={i} className="p-1.5 bg-slate-900 rounded border border-slate-800 text-center font-mono text-[9px]">
                         <span className="text-slate-400 font-bold block">{proj.horizon} SCENARIO</span>
                         <span className="font-black text-amber-400 block">{(proj.projected_probability * 100).toFixed(0)}%</span>

@@ -82,11 +82,16 @@ CREATE TABLE IF NOT EXISTS field_reports (
 
 CREATE TABLE IF NOT EXISTS notifications (
     id VARCHAR(64) PRIMARY KEY,
-    timestamp TIMESTAMP WITH TIME ZONE NOT NULL,
+    alert_id VARCHAR(64),
+    requested_at TIMESTAMP WITH TIME ZONE NOT NULL,
     recipient VARCHAR(150) NOT NULL,
     channel VARCHAR(50) NOT NULL,
+    provider VARCHAR(50) NOT NULL,
+    provider_message_id VARCHAR(150),
     message TEXT NOT NULL,
-    status VARCHAR(50) NOT NULL
+    status VARCHAR(50) NOT NULL,
+    failure_reason TEXT,
+    delivered_at TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE IF NOT EXISTS sensor_readings (

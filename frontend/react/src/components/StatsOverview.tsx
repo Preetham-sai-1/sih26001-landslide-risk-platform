@@ -71,32 +71,32 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({
         <span className="text-sm font-black text-orange-400 font-mono">{escalatingCount}</span>
       </div>
 
-      {/* 4. PENDING REQUESTS */}
+      {/* 4. VERIFY (Pending Field Verification) */}
       <div 
         onClick={() => onSelectKpi?.('requests')}
-        className="flex-1 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-800 hover:border-slate-700 transition cursor-pointer flex items-center justify-between shadow-md group"
-        title="Open Field Verification Requests"
+        className="flex-1 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-cyan-500/30 hover:border-cyan-500/60 transition cursor-pointer flex items-center justify-between shadow-md group"
+        title="Open Field Verification Queue"
       >
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-slate-800 text-slate-300 flex items-center justify-center shrink-0">
+          <div className="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
             <FileCheck2 className="w-3.5 h-3.5" />
           </div>
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Requests</span>
+          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Verify</span>
         </div>
-        <span className="text-sm font-black text-white font-mono">{pendingRequestsCount}</span>
+        <span className="text-sm font-black text-cyan-400 font-mono">{pendingRequestsCount}</span>
       </div>
 
       {/* 5. ACTIVE ALERTS */}
       <div 
         onClick={() => onSelectKpi?.('alerts')}
         className="flex-1 bg-slate-950/85 backdrop-blur-md px-3 py-1.5 rounded-xl border border-purple-500/30 hover:border-purple-500/60 transition cursor-pointer flex items-center justify-between shadow-md group"
-        title="Open Emergency Broadcast Alerts"
+        title="Open Active Emergency Broadcast Alerts"
       >
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center shrink-0">
             <Send className="w-3.5 h-3.5" />
           </div>
-          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Alerts</span>
+          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Alerts</span>
         </div>
         <span className="text-sm font-black text-purple-300 font-mono">{alertsCount}</span>
       </div>

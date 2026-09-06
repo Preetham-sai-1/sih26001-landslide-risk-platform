@@ -231,9 +231,9 @@ export const RiskMap: React.FC<RiskMapProps> = ({
           const color = getRiskColor(displayRisk);
           const isEscalating = fcEval.isEscalating && forecastHorizon !== 'CURRENT';
 
-          // Construct Spatial Cell Polygon Bounds (WGS84 EPSG:4326 Lat/Lon Pairs)
-          const dLat = 0.08;
-          const dLon = 0.09;
+          // Construct Spatial Cell Polygon Bounds (WGS84 EPSG:4326 Lat/Lon Pairs - 3 km x 3 km cell)
+          const dLat = 0.015;
+          const dLon = 0.015;
           const polygonBounds: [number, number][] = [
             [zone.lat + dLat, zone.lon - dLon],
             [zone.lat + dLat, zone.lon + dLon],
@@ -253,7 +253,7 @@ export const RiskMap: React.FC<RiskMapProps> = ({
             : '#334155';
             
           const strokeWeight = isSelected ? 3.0 : isEscalating ? 2.5 : isVeryHigh ? 2.0 : 1.2;
-          const fillOpacity = isVeryHigh ? 0.65 : isEscalating ? 0.60 : isSelected ? 0.60 : 0.45;
+          const fillOpacity = isVeryHigh ? 0.55 : isEscalating ? 0.50 : isSelected ? 0.50 : 0.35;
 
           return (
             <Polygon
