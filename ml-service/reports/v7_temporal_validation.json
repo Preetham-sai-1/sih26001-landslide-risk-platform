@@ -1,0 +1,38 @@
+{
+  "train_<_2016_val_2016": {
+    "val_year": 2016,
+    "train_samples": 1406,
+    "val_samples": 704,
+    "val_positives": 42,
+    "metrics": {
+      "roc_auc": 0.8876,
+      "pr_auc": 0.2962,
+      "brier_score": 0.0508,
+      "log_loss": 0.1707
+    }
+  },
+  "train_<_2017_val_2017": {
+    "val_year": 2017,
+    "train_samples": 2110,
+    "val_samples": 727,
+    "val_positives": 4,
+    "metrics": {
+      "roc_auc": 0.6705,
+      "pr_auc": 0.0135,
+      "brier_score": 0.0692,
+      "log_loss": 0.2217
+    }
+  },
+  "train_<_2018_val_2018": {
+    "val_year": 2018,
+    "train_samples": 2837,
+    "val_samples": 729,
+    "val_positives": 5,
+    "metrics": {
+      "roc_auc": 0.6428,
+      "pr_auc": 0.0112,
+      "brier_score": 0.045,
+      "log_loss": 0.1601
+    }
+  }
+}

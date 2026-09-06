@@ -1,0 +1,212 @@
+{
+  "Stage_1_Terrain": {
+    "XGBoost": {
+      "roc_auc": 0.6026,
+      "pr_auc": 0.0282,
+      "recall": 0.0909,
+      "precision": 0.0182,
+      "f1_score": 0.0304,
+      "fnr": 0.9091,
+      "false_alarms_per_1000_cells": 90.58,
+      "brier_score": 0.0871,
+      "log_loss": 0.2986
+    },
+    "RandomForest": {
+      "roc_auc": 0.6358,
+      "pr_auc": 0.0285,
+      "recall": 0.1515,
+      "precision": 0.0287,
+      "f1_score": 0.0482,
+      "fnr": 0.8485,
+      "false_alarms_per_1000_cells": 95.06,
+      "brier_score": 0.0973,
+      "log_loss": 0.3329
+    },
+    "LogisticRegression": {
+      "roc_auc": 0.5553,
+      "pr_auc": 0.0251,
+      "recall": 0.4848,
+      "precision": 0.0234,
+      "f1_score": 0.0446,
+      "fnr": 0.5152,
+      "false_alarms_per_1000_cells": 374.65,
+      "brier_score": 0.2252,
+      "log_loss": 0.6383
+    }
+  },
+  "Stage_2_Rainfall": {
+    "XGBoost": {
+      "roc_auc": 0.7997,
+      "pr_auc": 0.448,
+      "recall": 0.5455,
+      "precision": 0.1773,
+      "f1_score": 0.2677,
+      "fnr": 0.4545,
+      "false_alarms_per_1000_cells": 46.83,
+      "brier_score": 0.0544,
+      "log_loss": 0.2114
+    },
+    "RandomForest": {
+      "roc_auc": 0.7776,
+      "pr_auc": 0.1652,
+      "recall": 0.4697,
+      "precision": 0.2168,
+      "f1_score": 0.2967,
+      "fnr": 0.5303,
+      "false_alarms_per_1000_cells": 31.41,
+      "brier_score": 0.0386,
+      "log_loss": 0.1598
+    },
+    "LogisticRegression": {
+      "roc_auc": 0.8331,
+      "pr_auc": 0.5217,
+      "recall": 0.6515,
+      "precision": 0.0984,
+      "f1_score": 0.171,
+      "fnr": 0.3485,
+      "false_alarms_per_1000_cells": 110.49,
+      "brier_score": 0.1051,
+      "log_loss": 0.3805
+    }
+  },
+  "Stage_3_Terrain_Rainfall": {
+    "XGBoost": {
+      "roc_auc": 0.8523,
+      "pr_auc": 0.383,
+      "recall": 0.4848,
+      "precision": 0.1963,
+      "f1_score": 0.2795,
+      "fnr": 0.5152,
+      "false_alarms_per_1000_cells": 36.74,
+      "brier_score": 0.0367,
+      "log_loss": 0.1407
+    },
+    "RandomForest": {
+      "roc_auc": 0.8557,
+      "pr_auc": 0.2516,
+      "recall": 0.4545,
+      "precision": 0.2479,
+      "f1_score": 0.3209,
+      "fnr": 0.5455,
+      "false_alarms_per_1000_cells": 25.52,
+      "brier_score": 0.032,
+      "log_loss": 0.1376
+    },
+    "LogisticRegression": {
+      "roc_auc": 0.8402,
+      "pr_auc": 0.5306,
+      "recall": 0.7273,
+      "precision": 0.1064,
+      "f1_score": 0.1857,
+      "fnr": 0.2727,
+      "false_alarms_per_1000_cells": 113.01,
+      "brier_score": 0.0925,
+      "log_loss": 0.3332
+    }
+  },
+  "Stage_4_Terrain_Rainfall_LandCover": {
+    "XGBoost": {
+      "roc_auc": 0.8475,
+      "pr_auc": 0.3847,
+      "recall": 0.5152,
+      "precision": 0.2125,
+      "f1_score": 0.3009,
+      "fnr": 0.4848,
+      "false_alarms_per_1000_cells": 35.33,
+      "brier_score": 0.0375,
+      "log_loss": 0.1434
+    },
+    "RandomForest": {
+      "roc_auc": 0.8694,
+      "pr_auc": 0.258,
+      "recall": 0.4545,
+      "precision": 0.2459,
+      "f1_score": 0.3191,
+      "fnr": 0.5455,
+      "false_alarms_per_1000_cells": 25.8,
+      "brier_score": 0.0322,
+      "log_loss": 0.1314
+    },
+    "LogisticRegression": {
+      "roc_auc": 0.8402,
+      "pr_auc": 0.5306,
+      "recall": 0.7273,
+      "precision": 0.1064,
+      "f1_score": 0.1857,
+      "fnr": 0.2727,
+      "false_alarms_per_1000_cells": 113.01,
+      "brier_score": 0.0925,
+      "log_loss": 0.3332
+    }
+  },
+  "Stage_5_Terrain_Rainfall_LandCover_Hydro": {
+    "XGBoost": {
+      "roc_auc": 0.8879,
+      "pr_auc": 0.5063,
+      "recall": 0.4848,
+      "precision": 0.2406,
+      "f1_score": 0.3216,
+      "fnr": 0.5152,
+      "false_alarms_per_1000_cells": 28.32,
+      "brier_score": 0.0303,
+      "log_loss": 0.119
+    },
+    "RandomForest": {
+      "roc_auc": 0.8684,
+      "pr_auc": 0.3065,
+      "recall": 0.4394,
+      "precision": 0.2636,
+      "f1_score": 0.3295,
+      "fnr": 0.5606,
+      "false_alarms_per_1000_cells": 22.71,
+      "brier_score": 0.0318,
+      "log_loss": 0.1324
+    },
+    "LogisticRegression": {
+      "roc_auc": 0.8326,
+      "pr_auc": 0.5214,
+      "recall": 0.7273,
+      "precision": 0.1098,
+      "f1_score": 0.1909,
+      "fnr": 0.2727,
+      "false_alarms_per_1000_cells": 109.09,
+      "brier_score": 0.0922,
+      "log_loss": 0.3315
+    }
+  },
+  "Stage_6_All_Validated_Features": {
+    "XGBoost": {
+      "roc_auc": 0.8806,
+      "pr_auc": 0.4981,
+      "recall": 0.5152,
+      "precision": 0.2519,
+      "f1_score": 0.3383,
+      "fnr": 0.4848,
+      "false_alarms_per_1000_cells": 28.32,
+      "brier_score": 0.0292,
+      "log_loss": 0.1158
+    },
+    "RandomForest": {
+      "roc_auc": 0.8619,
+      "pr_auc": 0.3365,
+      "recall": 0.4697,
+      "precision": 0.3298,
+      "f1_score": 0.3875,
+      "fnr": 0.5303,
+      "false_alarms_per_1000_cells": 17.67,
+      "brier_score": 0.0292,
+      "log_loss": 0.1266
+    },
+    "LogisticRegression": {
+      "roc_auc": 0.8452,
+      "pr_auc": 0.5268,
+      "recall": 0.697,
+      "precision": 0.107,
+      "f1_score": 0.1855,
+      "fnr": 0.303,
+      "false_alarms_per_1000_cells": 107.68,
+      "brier_score": 0.0901,
+      "log_loss": 0.3195
+    }
+  }
+}

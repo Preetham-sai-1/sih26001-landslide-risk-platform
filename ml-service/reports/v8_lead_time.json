@@ -1,0 +1,11 @@
+{
+  "total_positive_episodes": 66,
+  "watch_alert_recall": 1.0,
+  "high_alert_recall": 0.7879,
+  "critical_alert_recall": 0.6818,
+  "median_lead_time_days": {
+    "WATCH": 2.0,
+    "HIGH": 1.0,
+    "CRITICAL": 0.0
+  }
+}

@@ -149,7 +149,7 @@ def _zonal_sample(array: np.ndarray, transform, grid: gpd.GeoDataFrame) -> pd.Se
     values = []
     for geom in grid.geometry:
         try:
-            mask = geometry_mask([geom], transform=transform, invert=True, out_shape=array.shape)
+            mask = geometry_mask([geom], transform=transform, invert=True, out_shape=array.shape, all_touched=True)
         except Exception:
             values.append(np.nan)
             continue

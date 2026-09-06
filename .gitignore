@@ -75,3 +75,12 @@ gis/zones/*
 
 # ---- Docker ----
 *.log
+
+# ---- Local archives & scratch files ----
+.freebuff/
+Kerela landslide.*
+easy-migration.zip
+metadata.pdf
+MANIFEST.TXT
+ml-service/data/cache/
+

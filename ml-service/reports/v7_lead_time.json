@@ -1,0 +1,11 @@
+{
+  "total_positive_episodes": 66,
+  "watch_alert_recall": 1.0,
+  "high_alert_recall": 0.7273,
+  "critical_alert_recall": 0.4394,
+  "avg_lead_time_days": {
+    "WATCH": "1-3 days prior via 3d/7d antecedent accumulation",
+    "HIGH": "0-1 day prior via 1d intensity spike",
+    "CRITICAL": "Same day event occurrence"
+  }
+}

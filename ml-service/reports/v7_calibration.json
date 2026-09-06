@@ -1,0 +1,19 @@
+{
+  "raw_metrics": {
+    "roc_auc": 0.8523,
+    "pr_auc": 0.383,
+    "brier_score": 0.0367,
+    "log_loss": 0.1407
+  },
+  "calibrated_metrics": {
+    "roc_auc": 0.8658,
+    "pr_auc": 0.3934,
+    "brier_score": 0.0124,
+    "log_loss": 0.0592
+  },
+  "operating_thresholds": {
+    "WATCH": 0.0188,
+    "HIGH": 0.4118,
+    "CRITICAL": 0.8077
+  }
+}

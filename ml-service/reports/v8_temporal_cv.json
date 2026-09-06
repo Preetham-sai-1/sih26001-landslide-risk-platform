@@ -1,0 +1,53 @@
+{
+  "train_<_2016_val_2016": {
+    "val_year": 2016,
+    "train_samples": 1406,
+    "val_samples": 704,
+    "val_positives": 42,
+    "metrics": {
+      "roc_auc": 0.7683,
+      "pr_auc": 0.1276,
+      "recall": 0.0238,
+      "precision": 0.125,
+      "f1_score": 0.04,
+      "fnr": 0.9762,
+      "false_alarms_per_1000_cells": 9.94,
+      "brier_score": 0.0631,
+      "log_loss": 0.2925
+    }
+  },
+  "train_<_2017_val_2017": {
+    "val_year": 2017,
+    "train_samples": 2110,
+    "val_samples": 727,
+    "val_positives": 4,
+    "metrics": {
+      "roc_auc": 0.7905,
+      "pr_auc": 0.019,
+      "recall": 0.25,
+      "precision": 0.0192,
+      "f1_score": 0.0357,
+      "fnr": 0.75,
+      "false_alarms_per_1000_cells": 70.15,
+      "brier_score": 0.0513,
+      "log_loss": 0.177
+    }
+  },
+  "train_<_2018_val_2018": {
+    "val_year": 2018,
+    "train_samples": 2837,
+    "val_samples": 729,
+    "val_positives": 5,
+    "metrics": {
+      "roc_auc": 0.7635,
+      "pr_auc": 0.0188,
+      "recall": 0.0,
+      "precision": 0.0,
+      "f1_score": 0.0,
+      "fnr": 1.0,
+      "false_alarms_per_1000_cells": 32.92,
+      "brier_score": 0.0337,
+      "log_loss": 0.1274
+    }
+  }
+}

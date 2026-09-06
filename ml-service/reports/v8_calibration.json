@@ -1,0 +1,29 @@
+{
+  "raw_metrics": {
+    "roc_auc": 0.8806,
+    "pr_auc": 0.4981,
+    "recall": 0.5152,
+    "precision": 0.2519,
+    "f1_score": 0.3383,
+    "fnr": 0.4848,
+    "false_alarms_per_1000_cells": 28.32,
+    "brier_score": 0.0292,
+    "log_loss": 0.1158
+  },
+  "calibrated_metrics": {
+    "roc_auc": 0.8961,
+    "pr_auc": 0.4877,
+    "recall": 0.3788,
+    "precision": 0.9259,
+    "f1_score": 0.5376,
+    "fnr": 0.6212,
+    "false_alarms_per_1000_cells": 0.56,
+    "brier_score": 0.0111,
+    "log_loss": 0.0523
+  },
+  "operating_thresholds": {
+    "WATCH": 0.0104,
+    "HIGH": 0.3158,
+    "CRITICAL": 0.6667
+  }
+}
